@@ -6,18 +6,20 @@ const jwt = require('jsonwebtoken');
 
 
 module.exports = {
-  
+
 
   siginup: async (req, res) => {
     try {
       let payload = req.body
       const passdata = await bcrypt.hash(payload.password, 10);
       payload.password = passdata
+      // payload.role = 1
 
       const userData = await Model.Users.findOne({ email: payload.email })
-      
+
       if (userData) throw "Email Allready exist"
       const data = await Model.Users.create(payload)
+      console.log('---dataa', data)
       await helper.success(res, "User Signup Seccessfully", data);
     } catch (error) {
       console.log(error)
@@ -29,50 +31,71 @@ module.exports = {
 
   login: async (req, res) => {
     try {
+      console.log("hereeeeeeeeeeeee")
       let payload = req.body
       const findata = await helper.userData(payload.email)
       if (!findata) throw "Please Enter Crrect Email"
       const passdata = bcrypt.compare(payload.password, findata.password)
       if (passdata == false) throw "Increct password"
 
-      let authdata ={
-        id:findata._id,
-        email:findata.email
+      let authdata = {
+        id: findata._id,
+        email: findata.email
       }
-      const Token = jwt.sign({ authdata}, "shhhhhhared-secret");
-      
-      // data.token = accessToken
-      let data = await Model.Users.updateOne({_id:findata._id},{accessToken:Token})
-      const userdata = await helper.userData(payload.email)
-      await helper.success(res, "User login Seccessfully",userdata);
+      const Token = jwt.sign({ authdata }, "shhhhhhared-secret");
 
-    } catch (error) { 
-      console.log('--data',error)
+      // data.token = accessToken
+      let data = await Model.Users.updateOne({ _id: findata._id }, { accessToken: Token })
+      const userdata = await helper.userData(payload.email)
+      if (userdata.role == 1) {
+        console.log('student')
+        await helper.success(res, "student login Seccessfully", userdata);
+      } else {
+        console.log('>>>>>>>>>>>>>>>teacher')
+        await helper.success(res, "teacher login Seccessfully", userdata);
+
+      }
+      // await helper.success(res, "User login Seccessfully", userdata);
+      // console.log('---data', userdata);
+
+    } catch (error) {
+      console.log('--data', error)
       await helper.error(res, error)
     }
   },
 
   userdata: async (req, res) => {
     try {
-
-      // console.log()
-
-      // const bodydata= {...req.body ,...req.params, ...req.query};
-    
-      // console.log(bodydata, "???????????????????/"); 
-
       console.log(req.user.authdata)
-
       const data = await Model.Users.findById(req.user.authdata.id)
       await helper.success(res, "User Data get Seccessfully", data);
-
-      
-
     } catch (error) {
       await helper.error(res, error)
     }
 
-  }
+  },
+
+
+  sendimage: async (req, res) => {
+    try {
+      // console.log(req.files.image, ">>>>>>>>>>>>>>>>>>>")
+      let imageName = req.files.image.name;
+      let img = req.files.image
+      console.log(imageName);
+      console.log(img.mv, ">>>>>>>>>>>>>>>>>>>>>>>>>.");
+
+      img.mv(`${__dirname}/public/${imageName}`, err => {
+        if (err) {
+          return res.status(500).send(err);
+        }
+      })
+      console.log(`${__dirname}/public/image/${imageName}`)
+
+
+    } catch (error) {
+      console.log('----errr', error)
+    }
+  },
 
 
 

@@ -9,6 +9,7 @@ const controller = require("./controller");
 router.post('/signUp', controller.siginup)
 router.post('/login', controller.login)
 router.get('/userdata', authenticateToken, controller.userdata)
+router.post('/imageupload',controller.sendimage)
 
 
 module.exports = router;
