@@ -53,7 +53,7 @@ module.exports = {
         await helper.success(res, "teacher login Seccessfully", userdata);
 
       }
-    
+
     } catch (error) {
       console.log('--data', error)
       await helper.error(res, error)
@@ -82,13 +82,28 @@ module.exports = {
         }
       })
       await helper.success(res, "Image Upload Successfully", imageName);
-
-
     } catch (error) {
       console.log('----errr', error)
+      await helper.error(res, error)
     }
   },
 
+
+  file_upload: async (req, res) => {
+    try {
+      console.log(req.files.image.length,">>>>>>>>>>>..;lenth")
+
+      
+
+    } catch (error) {
+      console.log(error, "error>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+      await helper.error(res, error)
+    }
+
+
+
+
+  }
 
 
 
