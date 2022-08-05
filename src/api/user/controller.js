@@ -3,8 +3,6 @@ const helper = require("../../helper");
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 
-
-
 module.exports = {
 
 
@@ -55,9 +53,7 @@ module.exports = {
         await helper.success(res, "teacher login Seccessfully", userdata);
 
       }
-      // await helper.success(res, "User login Seccessfully", userdata);
-      // console.log('---data', userdata);
-
+    
     } catch (error) {
       console.log('--data', error)
       await helper.error(res, error)
@@ -75,21 +71,17 @@ module.exports = {
 
   },
 
-
   sendimage: async (req, res) => {
     try {
-      // console.log(req.files.image, ">>>>>>>>>>>>>>>>>>>")
       let imageName = req.files.image.name;
       let img = req.files.image
       console.log(imageName);
-      console.log(img.mv, ">>>>>>>>>>>>>>>>>>>>>>>>>.");
-
-      img.mv(`${__dirname}/public/${imageName}`, err => {
+      img.mv(`public/${imageName}`, err => {
         if (err) {
           return res.status(500).send(err);
         }
       })
-      console.log(`${__dirname}/public/image/${imageName}`)
+      await helper.success(res, "Image Upload Successfully", imageName);
 
 
     } catch (error) {
