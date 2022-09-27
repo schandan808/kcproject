@@ -14,5 +14,12 @@ module.exports = {
       await helper.success(res,error.message)
     }
   },  
+  test:async(req, res)=>{
+    try {
+      res.render("index")
+    } catch (error) {
+      console.log(">>>>>>>>>err",error)
+    }
+  }
 
 };
